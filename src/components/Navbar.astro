@@ -1,34 +1,63 @@
 ---
 import NavButton from "./NavButton.astro";
+
+// Be careful with the formatting of this type. Default prettier formatting will cause a bug in the Astro compiler
+export type ActiveButton =
+| "Info"
+| "Progress (JP)"
+| "Progress (US)"
+| "Progress (PAL)"
+| "Progress (iQue)"
+| "Discord"
+| "Github";
+
+type Props = {
+  activeButton: ActiveButton;
+};
+
+const { activeButton } = Astro.props;
 ---
 
 <nav>
-  <NavButton color="red" active="active" buttonText="Info" href="/" />
+  <NavButton color="red" active={activeButton} buttonText="Info" href="/" />
   <NavButton
     color="green"
-    active="inactive"
+    active={activeButton}
     buttonText="Progress (JP)"
     href="/progress-jp"
   />
   <NavButton
     color="yellow"
-    active="inactive"
+    active={activeButton}
     buttonText="Progress (US)"
     href="/progress-us"
   />
   <NavButton
     color="blue"
-    active="inactive"
+    active={activeButton}
     buttonText="Progress (PAL)"
     href="/progress-pal"
   />
   <NavButton
     color="orange"
-    active="inactive"
+    active={activeButton}
     buttonText="Progress (iQue)"
     href="/progress-ique"
   />
+  <NavButton
+    color="blurple"
+    active={activeButton}
+    buttonText="Discord"
+    href="https://starhaven.dev/discord"
+  />
+  <NavButton
+    color="github"
+    active={activeButton}
+    buttonText="Github"
+    href="https://github.com/pmret/papermario"
+  />
 </nav>
+
 <style>
   nav {
     margin-bottom: -0.6em;

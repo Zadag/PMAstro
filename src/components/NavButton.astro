@@ -1,9 +1,18 @@
 ---
+import type { ActiveButton } from "./Navbar.astro";
+type Props = {
+  color: string;
+  active: ActiveButton;
+  buttonText: string;
+  href: string;
+};
+
 const { color, active, buttonText, href } = Astro.props;
+const isActive = active === buttonText ? "active" : "inactive";
 ---
 
 <a href={href}>
-  <button class=`nav-button ${active} ${color}`>{buttonText}</button>
+  <button class=`nav-button ${isActive} ${color}`>{buttonText}</button>
 </a>
 
 <style>
