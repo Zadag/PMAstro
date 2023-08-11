@@ -1,3 +1,44 @@
+---
+import NavButton from "./NavButton.astro";
+---
+
 <nav>
-  <a></a>
+  <NavButton color="red" active="active" buttonText="Info" href="/" />
+  <NavButton
+    color="green"
+    active="inactive"
+    buttonText="Progress (JP)"
+    href="/progress-jp"
+  />
+  <NavButton
+    color="yellow"
+    active="inactive"
+    buttonText="Progress (US)"
+    href="/progress-us"
+  />
+  <NavButton
+    color="blue"
+    active="inactive"
+    buttonText="Progress (PAL)"
+    href="/progress-pal"
+  />
+  <NavButton
+    color="orange"
+    active="inactive"
+    buttonText="Progress (iQue)"
+    href="/progress-ique"
+  />
 </nav>
+<style>
+  nav {
+    margin-bottom: -0.6em;
+    z-index: 1;
+    width: 100%;
+    max-width: 1600px;
+  }
+  @media (min-width: 600px) {
+    nav {
+      margin-left: 48px;
+    }
+  }
+</style>
