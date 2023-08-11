@@ -5,6 +5,220 @@ import Navbar from "../components/Navbar.astro";
 
 <Layout>
   <Navbar activeButton="Info" />
+  <main id="main" class="red">
+    <div class="prose">
+      <div class="prose-col">
+        <h3>What is this?</h3>
+        <p>
+          <a href="https://github.com/pmret/papermario">papermario</a> is an ongoing
+          project to reverse-engineer the source code for <a
+            href="https://wikipedia.org/wiki/Paper_Mario_(video_game)"
+            >Paper Mario</a
+          > on the Nintendo 64. The game's assembly code is manually decompiled into
+          C source code. The project also extracts game assets (such as backgrounds,
+          sprites, maps, and text) from an original game copy into more modern formats.
+          The C code and assets can then be <i>recompiled</i> to create a 1-to-1
+          ("matching") copy of the game.
+        </p>
+
+        <h3>Why?</h3>
+        <p>
+          Different contributors have their own reasons for decompiling Paper
+          Mario. These include:
+        </p>
+        <ul>
+          <li>Preserving the game</li>
+          <li>Learning more about how the game was engineered</li>
+          <li>
+            Helping speedrunners and glitch-hunters understand why bugs occur
+          </li>
+          <li>Making engine mods easier to create</li>
+          <li>Enjoying decompilation in and of itself</li>
+        </ul>
+        <h3>How completed is it?</h3>
+        <p>
+          We've reached 100% with the US version of the game. We are currently
+          working on full support for the remaining versions of the game, asset
+          support, and more.
+        </p>
+        <p>
+          <a href="/progress-us">View the progress chart ›</a>
+        </p>
+      </div>
+
+      <div class="prose-col">
+        <h3>You've reached 100%! Congratulations!</h3>
+        <p>
+          It's been an incredible journey so far. Although our progress graph
+          shows 100%, this is only one way of measuring the progress of the
+          project. We still have more work planned to make the project the best
+          that it can be.
+        </p>
+
+        <h3 id="aspects">What other areas of the project still need work?</h3>
+        <p>
+          Although we have reached 100% on the US version, there are still many
+          areas of the project that need work. These include:
+        </p>
+        <ul>
+          <li>
+            Assets: Although many assets are properly handled and are moddable,
+            there are still a few assets that are not properly being extracted
+            and rebuilt in a way that would allow for porting or modding
+            efforts.
+          </li>
+          <li>
+            Codebase modernization: We plan to add QOL features to the codebase
+            so the code is as nice as it can be while still compiling to match
+            the original assembly.
+          </li>
+          <li>
+            Documentation: Many variables, functions, enum values, and more are
+            not yet named or documented.
+          </li>
+          <li>
+            Other versions: The remaining versions of the game have not yet been
+            fully matched, and we plan to support all releases of the game.
+          </li>
+        </ul>
+      </div>
+
+      <div class="prose-col">
+        <h3>PC Port?</h3>
+        <p>
+          There is still work to be done before work can be started on a PC
+          port. The primary blocker is that some assets are still packaged as
+          raw binary data, rather than being properly extracted and rebuilt. Now
+          that we have reached 100% for the US version of the game, we will be
+          focusing on support for the remaining assets.
+        </p>
+
+        <h3>Can I make mods with this?</h3>
+        <p>
+          Yes. However, we're still working out issues with modding support, so
+          please bear with us. Although the main repo is suitable for modding,
+          Alex has started a fork of the main decomp repo, <a
+            href="https://github.com/nanaian/papermario-dx">papermario-dx</a
+          >, which aims to provide a more convenient base for creating mods.
+        </p>
+
+        <h3>How can I help contribute?</h3>
+        <p>
+          There plenty of ways to get involved, not limited to helping with
+          asset support, documentation, and code cleanup. Please feel free to
+          get involved!
+        </p>
+        <p>
+          <a href="https://github.com/pmret/papermario/blob/main/INSTALL.md"
+            >Setup instructions ›</a
+          ><br />
+          <a href="https://github.com/pmret/papermario/issues"
+            >Github issues ›</a
+          >
+        </p>
+        <p>
+          For modding resources and discussion of the project, please <br />
+          <a href="https://discord.gg/urUm3VG">Join our Discord server ›</a>
+        </p>
+      </div>
+    </div>
+  </main>
 </Layout>
 
-<style></style>
+<style>
+  main {
+    flex: 1;
+    width: 100%;
+    max-width: 1600px;
+    max-height: calc(100vh - 100px);
+
+    background-repeat: repeat;
+    background-size: 48px;
+    background-position: center;
+
+    -ms-interpolation-mode: nearest-neighbor;
+    image-rendering: optimizespeed;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+
+    border-radius: 1rem;
+
+    padding: 1em;
+    /*padding-bottom: 2.5em;*/
+
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    transition: 600ms transform ease-in-out;
+
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  @media (max-width: 800px) {
+    main {
+      padding-left: 0.2em;
+      padding-right: 0.2em;
+      padding-top: 0.2em;
+    }
+  }
+
+  main > :last-child {
+    padding-bottom: 1.5em;
+  }
+
+  main.red {
+    background-color: #d29090;
+    /*background-image: url(bg/red-checker.png);*/
+  }
+
+  main > * {
+    image-rendering: initial;
+  }
+
+  .prose {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+      Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    color: #000000aa;
+    font-size: 0.8rem;
+    font-weight: 400;
+    --text-outline: transparent;
+    text-align: left;
+    max-height: 1100px;
+    max-width: 60ch;
+    margin: auto;
+    padding: 1em;
+  }
+
+  .prose a:any-link {
+    color: #f9e3e3;
+    --text-outline: transparent;
+  }
+
+  .prose a:any-link:hover {
+    text-decoration: underline;
+  }
+
+  .prose p {
+    margin-top: 0.2em;
+  }
+
+  .prose h3 {
+    margin-bottom: 0;
+  }
+
+  @media screen and (min-width: 100em) {
+    .prose {
+      display: flex;
+      justify-content: space-around;
+      max-width: 100%;
+      gap: 2em;
+    }
+
+    .prose-col {
+      width: 60em;
+      flex-grow: 0;
+    }
+  }
+</style>
