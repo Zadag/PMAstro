@@ -3,15 +3,10 @@ import styled from "styled-components";
 import logo from "../assets/100.png";
 import redChecker from "../assets/tiles/red-checker.png";
 
-type IBanner = {
-  visible: boolean;
-};
-
 const Banner = () => {
   const [showBanner, setShowBanner] = useState(false);
 
   const buttonHandler = () => {
-    console.log("test");
     setShowBanner(false);
   };
 
