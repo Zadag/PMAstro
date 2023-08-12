@@ -60,4 +60,6 @@ async function fetchData(version: Version): Promise<RowWithPercent[]> {
     percentBytes: (row.matchingBytes / totalBytes) * 100,
   }));
 }
+
+console.log(await fetchData(Astro.props.version));
 ---
