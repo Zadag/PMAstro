@@ -1,28 +1,9 @@
 ---
-type Version = "jp" | "us" | "pal" | "ique";
-type CsvObj = {
-  commit: string;
-  matchingBytes: number;
-  matchingFuncs: number;
-  nonMatchingBytes: number;
-  nonMatchingFuncs: number;
-  percentBytes?: number;
-  timestamp: number;
-  totalBytes: number;
-  totalFuncs: number;
-};
+import { fetchProgress, type Version } from "../lib/progress";
 
-const csvVersions: Record<string, any> = {
-  timestamp: parseInt,
-  commit: (s: string) => s,
-  totalFuncs: parseInt,
-  nonMatchingFuncs: parseInt,
-  matchingFuncs: parseInt,
-  totalBytes: (b: string) => parseInt(b),
-  nonMatchingBytes: (b: string) => parseInt(b),
-  matchingBytes: (b: string) => parseInt(b),
-  percentBytes: (b: string) => parseInt(b),
-};
+interface Props {
+  version: Version
+}
 
 const colors = {
   green: { stroke: "#40e334", fill: "#91eb7f" },
@@ -31,34 +12,5 @@ const colors = {
   orange: { stroke: "#cc8400", fill: "#ffa500" },
 };
 
-async function fetchData(version: Version) {
-  const csv = await fetch(
-    `https://papermar.io/reports/progress_${version}.csv`
-  ).then((response) => response.text());
-
-  const rows = csv
-    .split("\n")
-    .filter((row) => row.length)
-    .map((row) => {
-      const [version, ...data] = row.split(",");
-      const structure = csvVersions;
-      const obj = {} as CsvObj;
-
-      for (const [key, transform] of Object.entries(structure)) {
-        obj[key as keyof CsvObj] = transform(data.shift() as string);
-      }
-
-      return obj;
-    });
-
-  const latest = rows[rows.length - 1];
-
-  const totalBytes = latest.totalBytes;
-
-  for (const row of rows) {
-    row.percentBytes = (row.matchingBytes / totalBytes) * 100;
-  }
-
-  return rows;
-}
+console.log(await fetchProgress(Astro.props.version));
 ---
