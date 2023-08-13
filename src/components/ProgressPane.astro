@@ -1,9 +1,14 @@
 ---
-import { fetchProgress, type Version } from "../lib/progress";
+import { fetchProgress, type Version, type Progress } from "../lib/progress";
 
 interface Props {
-  version: Version
+  version: Version;
+  color: "green" | "yellow" | "blue" | "orange";
 }
+
+type UplotData = [number[], number[]];
+
+const { version, color } = Astro.props;
 
 const colors = {
   green: { stroke: "#40e334", fill: "#91eb7f" },
@@ -12,5 +17,19 @@ const colors = {
   orange: { stroke: "#cc8400", fill: "#ffa500" },
 };
 
-console.log(await fetchProgress(Astro.props.version));
+const data = await fetchProgress(version);
+const { stroke, fill } = colors[color];
+
+const uplotData = data.reduce(
+  (acc, current) => {
+    acc[0].push(current.timestamp);
+    acc[1].push(current.percentBytes);
+    return acc;
+  },
+  [[], []] as UplotData
+);
 ---
+
+<br />
+<br />
+<p>{Object.keys(data[6])}</p>

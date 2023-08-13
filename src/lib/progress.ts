@@ -12,7 +12,7 @@ const structure = {
 };
 
 type ParsedRow = {
-  [Key in keyof typeof structure]: ReturnType<typeof structure[Key]>
+  [Key in keyof typeof structure]: ReturnType<(typeof structure)[Key]>;
 };
 
 export type Progress = ParsedRow & { percentBytes: number };
@@ -27,9 +27,9 @@ export async function fetchProgress(version: Version): Promise<Progress[]> {
     .filter((row) => row.length)
     .map((row) => {
       const [version, ...data] = row.split(",");
-		if (version !== "1") {
-			throw new Error(`invalid CSV row: ${row}`);
-		}
+      if (version !== "1") {
+        throw new Error(`invalid CSV row: ${row}`);
+      }
       return Object.entries(structure).reduce(
         (acc, [key, transform]) => ({
           ...acc,
