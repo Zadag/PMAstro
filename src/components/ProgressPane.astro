@@ -1,12 +1,16 @@
 ---
-import { fetchProgress, type Version, type Progress } from "../lib/progress";
+import type { Version, Progress } from "../lib/progress";
+import { fetchProgress } from "../lib/progress";
+import { Chart } from "./Chart";
+
+let selectedEntry;
 
 interface Props {
   version: Version;
   color: "green" | "yellow" | "blue" | "orange";
 }
 
-type UplotData = [number[], number[]];
+export type UplotData = [number[], number[]];
 
 const { version, color } = Astro.props;
 
@@ -28,8 +32,19 @@ const uplotData = data.reduce(
   },
   [[], []] as UplotData
 );
+
+// const uplotData = [
+//   [1, 2, 3, 4],
+//   [5, 6, 7, 8],
+// ] as UplotData;
 ---
 
-<br />
-<br />
-<p>{Object.keys(data[6])}</p>
+<div id="plot">
+  <Chart
+    client:only
+    uplotData={uplotData}
+    stroke={stroke}
+    fill={fill}
+    color={color}
+  />
+</div>
