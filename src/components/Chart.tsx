@@ -1,6 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, LegacyRef } from "react";
 import uPlot from "uplot";
 //import type { UplotData } from "./ProgressPane.astro";
+import { styled } from "styled-components";
+import "uplot/dist/uPlot.min.css";
 
 type UplotData = [number[], number[]];
 
@@ -54,7 +56,9 @@ const DataView = ({ uplotData, stroke, fill, color }: DataViewProps) => {
 
   useEffect(() => {
     if (uplotEl.current && uplotData.length) {
-      const { width, height } = uplotEl.current.getBoundingClientRect();
+      let { width, height } = uplotEl.current.getBoundingClientRect();
+      height = 400;
+      console.log(width, height);
       const uplot = new uPlot(
         {
           width,
@@ -100,41 +104,54 @@ const DataView = ({ uplotData, stroke, fill, color }: DataViewProps) => {
         uplotData,
         uplotEl.current
       );
+      function onResize() {
+        if (uplotEl.current) {
+          const { width, height } = uplotEl.current.getBoundingClientRect();
+          console.log("set", width, height);
+          uplot.setSize({ width, height });
+        }
+      }
+      document.addEventListener("resize", onResize);
+
+      return () => {
+        uplot.destroy();
+        document.removeEventListener("resize", onResize);
+      };
     }
   });
 
   return (
     <>
-      <h1 className="aria-only">
-        {latest && formatPercent(latest[8])} decompiled
-      </h1>
-      <div className="shadow-box flex-grow">
-        <div
-          className="shadow-box-inner"
-          style={{
-            padding: ".7em",
-            background: "#e2e1d8",
-          }}
-        >
-          <div className="progress-chart" ref={uplotEl} />
-          {latest && (
-            <div className="progress-percent" title="Latest matched percentage">
-              {formatPercent(latest[8])}
-            </div>
-          )}
-        </div>
+      <div
+        style={{
+          display: "flex",
+          flex: 1,
+        }}
+      >
+        <PercentHeader>
+          {latest && formatPercent(latest[8])} decompiled
+        </PercentHeader>
+        <OuterShadowDiv>
+          <InnerShadowDiv>
+            <ProgressChart ref={uplotEl} />
+            {latest && (
+              <ProgressPercent title="Latest matched percentage">
+                {formatPercent(latest[8])}
+              </ProgressPercent>
+            )}
+          </InnerShadowDiv>
 
-        <button aria-hidden={true} className={"shadow-box-title " + color}>
-          {selectedEntry
-            ? formatTimestamp(selectedEntry[4], {
-                dateStyle: "long",
-                timeStyle: "short",
-              })
-            : ""}
-        </button>
-      </div>
+          <SelectedEntry aria-hidden={true}>
+            {selectedEntry
+              ? formatTimestamp(selectedEntry[4], {
+                  dateStyle: "long",
+                  timeStyle: "short",
+                })
+              : ""}
+          </SelectedEntry>
+        </OuterShadowDiv>
 
-      {/* {(uplotData.length &&
+        {/* {(uplotData.length &&
       selectedEntry &&
       captionPortal.current &&
       createPortal(
@@ -145,9 +162,105 @@ const DataView = ({ uplotData, stroke, fill, color }: DataViewProps) => {
         captionPortal.current
       )) ||
       null} */}
+      </div>
     </>
   );
 };
+
+const PercentHeader = styled.h1`
+  position: absolute;
+  left: -10000px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+`;
+
+const OuterShadowDiv = styled.div`
+  background: #ffffff44;
+  backdrop-filter: blur(4px);
+
+  padding: 1em;
+  margin: 0.5em;
+  margin-bottom: 1em;
+
+  border-radius: 16px;
+  box-shadow: 0.4em 0.4em rgba(0, 0, 0, 0.15);
+
+  border-top: 4px solid #ffffffaa;
+  padding-top: calc(1em - 2px);
+
+  border-left: 4px solid #ffffffaa;
+  border-right: 4px solid #00000055;
+  border-bottom: 4px solid #00000055;
+
+  position: relative;
+
+  flex: 1;
+`;
+
+const InnerShadowDiv = styled.div`
+  border-radius: 12px;
+  box-shadow: inset 0.4em 0.4em rgba(0, 0, 0, 0.15);
+
+  border-top: 4px solid #00000055;
+  border-left: 4px solid #00000055;
+  border-bottom: 4px solid #ffffffaa;
+  border-right: 4px solid #ffffffaa;
+
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  position: relative;
+  overflow: hidden;
+
+  background: white;
+
+  padding: 0.7em;
+  background: #e2e1d8;
+`;
+
+const ProgressChart = styled.div`
+  flex: 1;
+
+  font-size: 14px;
+  overflow: hidden;
+
+  user-select: none;
+  -webkit-user-select: none;
+`;
+
+const ProgressPercent = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  font-size: max(48px, 10vw);
+  color: rgba(0, 0, 0, 0.15);
+
+  pointer-events: none;
+`;
+
+const SelectedEntry = styled.button`
+  position: absolute;
+  left: 50%;
+  bottom: -1em;
+  transform: translateX(-50%);
+
+  width: 90%;
+  max-width: 600px;
+
+  text-align: center;
+
+  border-radius: 1em;
+
+  padding-top: 0.2em;
+  height: 1.2em;
+
+  cursor: default;
+`;
 
 export const Chart = ({ uplotData, stroke, fill, color }: ChartProps) => {
   const [data, setData] = useState(uplotData);
