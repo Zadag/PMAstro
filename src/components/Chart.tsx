@@ -3,18 +3,20 @@ import uPlot from "uplot";
 //import type { UplotData } from "./ProgressPane.astro";
 import { styled } from "styled-components";
 import "uplot/dist/uPlot.min.css";
+import { Progress, Version, fetchProgress } from "../lib/progress";
 
 type UplotData = [number[], number[]];
 
 interface ChartProps {
-  uplotData: UplotData;
   stroke: string;
   fill: string;
   color: string;
+  version: Version;
 }
 
 interface DataViewProps {
   uplotData: UplotData;
+  data: Progress[];
   stroke: string;
   fill: string;
   color: string;
@@ -48,8 +50,8 @@ function formatPercent(alpha: number) {
 //   );
 // }
 
-const DataView = ({ uplotData, stroke, fill, color }: DataViewProps) => {
-  const latest = uplotData[uplotData.length - 1];
+const DataView = ({ uplotData, data, stroke, fill, color }: DataViewProps) => {
+  const latest = data[data.length - 1];
 
   const [selectedEntry, setSelectedEntry] = useState(latest);
   const uplotEl = useRef<HTMLDivElement>(null);
@@ -57,7 +59,7 @@ const DataView = ({ uplotData, stroke, fill, color }: DataViewProps) => {
   useEffect(() => {
     if (uplotEl.current && uplotData.length) {
       let { width, height } = uplotEl.current.getBoundingClientRect();
-      height = 400;
+      height = 400; // look into this!
       console.log(width, height);
       const uplot = new uPlot(
         {
@@ -94,7 +96,7 @@ const DataView = ({ uplotData, stroke, fill, color }: DataViewProps) => {
                 setCursor: (u) => {
                   const idx = u.cursor.idx;
                   if (typeof idx === "number") {
-                    setSelectedEntry(uplotData[idx]);
+                    setSelectedEntry(data[idx]);
                   }
                 },
               },
@@ -105,6 +107,7 @@ const DataView = ({ uplotData, stroke, fill, color }: DataViewProps) => {
         uplotEl.current
       );
       function onResize() {
+        console.log("should set");
         if (uplotEl.current) {
           const { width, height } = uplotEl.current.getBoundingClientRect();
           console.log("set", width, height);
@@ -118,7 +121,7 @@ const DataView = ({ uplotData, stroke, fill, color }: DataViewProps) => {
         document.removeEventListener("resize", onResize);
       };
     }
-  });
+  }, [uplotData, uplotEl.current, stroke]);
 
   return (
     <>
@@ -129,21 +132,21 @@ const DataView = ({ uplotData, stroke, fill, color }: DataViewProps) => {
         }}
       >
         <PercentHeader>
-          {latest && formatPercent(latest[8])} decompiled
+          {latest && formatPercent(latest.percentBytes)} decompiled
         </PercentHeader>
         <OuterShadowDiv>
           <InnerShadowDiv>
             <ProgressChart ref={uplotEl} />
             {latest && (
               <ProgressPercent title="Latest matched percentage">
-                {formatPercent(latest[8])}
+                {formatPercent(latest.percentBytes)}
               </ProgressPercent>
             )}
           </InnerShadowDiv>
 
           <SelectedEntry aria-hidden={true}>
             {selectedEntry
-              ? formatTimestamp(selectedEntry[4], {
+              ? formatTimestamp(selectedEntry.timestamp, {
                   dateStyle: "long",
                   timeStyle: "short",
                 })
@@ -262,13 +265,40 @@ const SelectedEntry = styled.button`
   cursor: default;
 `;
 
-export const Chart = ({ uplotData, stroke, fill, color }: ChartProps) => {
-  const [data, setData] = useState(uplotData);
+export const Chart = ({ stroke, fill, color, version }: ChartProps) => {
+  const [data, setData] = useState<Progress[]>();
+  const [upData, setUpData] = useState<UplotData>();
+
+  useEffect(() => {
+    const fetchWrapper = async () => {
+      const data = await fetchProgress(version);
+      setData(data);
+
+      const uplotData = data.reduce(
+        (acc, current) => {
+          acc[0].push(current.timestamp);
+          acc[1].push(current.percentBytes);
+          return acc;
+        },
+        [[], []] as UplotData
+      );
+
+      setUpData(uplotData);
+    };
+
+    fetchWrapper();
+  }, []);
 
   return (
     <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-      {data && (
-        <DataView uplotData={data} stroke={stroke} fill={fill} color={color} />
+      {data && upData && (
+        <DataView
+          uplotData={upData}
+          data={data}
+          stroke={stroke}
+          fill={fill}
+          color={color}
+        />
       )}
     </div>
   );

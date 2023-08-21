@@ -21,30 +21,69 @@ const colors = {
   orange: { stroke: "#cc8400", fill: "#ffa500" },
 };
 
-const data = await fetchProgress(version);
 const { stroke, fill } = colors[color];
-
-const uplotData = data.reduce(
-  (acc, current) => {
-    acc[0].push(current.timestamp);
-    acc[1].push(current.percentBytes);
-    return acc;
-  },
-  [[], []] as UplotData
-);
-
-// const uplotData = [
-//   [1, 2, 3, 4],
-//   [5, 6, 7, 8],
-// ] as UplotData;
 ---
 
-<div id="plot">
-  <Chart
-    client:only
-    uplotData={uplotData}
-    stroke={stroke}
-    fill={fill}
-    color={color}
-  />
-</div>
+<main id="main" class={color}>
+  <div id="plot">
+    <Chart
+      client:only
+      stroke={stroke}
+      fill={fill}
+      color={color}
+      version={version}
+    />
+  </div>
+</main>
+<style>
+  main {
+    flex: 1;
+    width: 100%;
+    max-width: 1600px;
+    max-height: calc(100vh - 100px);
+
+    background-repeat: repeat;
+    background-size: 48px;
+    background-position: center;
+
+    -ms-interpolation-mode: nearest-neighbor;
+    image-rendering: optimizespeed;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+
+    border-radius: 1rem;
+
+    padding: 1em;
+    /*padding-bottom: 2.5em;*/
+
+    overflow-y: auto;
+
+    display: flex;
+    flex-direction: column;
+
+    transition: 600ms transform ease-in-out;
+
+    box-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
+  }
+
+  @media (max-width: 800px) {
+    main {
+      padding-left: 0.2em;
+      padding-right: 0.2em;
+      padding-top: 0.2em;
+    }
+  }
+
+  main > :last-child {
+    padding-bottom: 1.5em;
+  }
+
+  main.green {
+    background-color: #68ff51;
+    background-image: url("../assets/tiles/green-checker.png");
+  }
+
+  main > * {
+    image-rendering: initial;
+  }
+</style>
