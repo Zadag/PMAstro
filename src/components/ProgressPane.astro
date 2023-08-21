@@ -1,9 +1,6 @@
 ---
-import type { Version, Progress } from "../lib/progress";
-import { fetchProgress } from "../lib/progress";
+import type { Version } from "../lib/progress";
 import { Chart } from "./Chart";
-
-let selectedEntry;
 
 interface Props {
   version: Version;
@@ -81,6 +78,20 @@ const { stroke, fill } = colors[color];
   main.green {
     background-color: #68ff51;
     background-image: url("../assets/tiles/green-checker.png");
+  }
+
+  main.yellow {
+    background-color: #e2d8b3;
+    background-image: url("../assets/tiles/yellow-checker.png");
+  }
+  main.blue {
+    background-color: #518bff;
+    background-image: url("../assets/tiles/teal-checker.png");
+  }
+
+  main.orange {
+    background-color: #ffd651;
+    background-image: url("../assets/tiles/yellow-checker.png");
   }
 
   main > * {
